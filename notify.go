@@ -35,6 +35,10 @@ func main() {
 
 	defer resp.Body.Close()
 
+	if resp.StatusCode != 200 {
+		log.Fatalf("Error fetching notifications. Response code: %d", resp.StatusCode)
+	}
+
 	decoder := json.NewDecoder(resp.Body)
 	jsonBody := make([]map[string]interface{}, 10)
 
