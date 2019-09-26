@@ -3,12 +3,31 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	"io/ioutil"
 	"log"
 	"net/http"
+	"os/user"
+	"path/filepath"
+	"strings"
 )
 
+func check(err error) {
+	if err != nil {
+		log.Fatal(err)
+	}
+}
+
 func main() {
-	token := ""
+
+	user, err := user.Current()
+	check(err)
+
+	path := filepath.Join(user.HomeDir, ".ghnotify")
+
+	data, err := ioutil.ReadFile(path)
+	check(err)
+
+	token := fmt.Sprintf("Bearer %s", strings.TrimSpace(string(data)))
 	notficationsEndpoint := "https://github.ibm.com/api/v3/notifications"
 	client := http.Client{}
 
