@@ -11,12 +11,6 @@ import (
 	"strings"
 )
 
-func check(err error) {
-	if err != nil {
-		log.Fatal(err)
-	}
-}
-
 func main() {
 
 	user, err := user.Current()
@@ -32,18 +26,12 @@ func main() {
 	client := http.Client{}
 
 	request, err := http.NewRequest("GET", notficationsEndpoint, nil)
-
-	if err != nil {
-		log.Fatal("Could not create request", err)
-	}
+	check(err)
 
 	request.Header.Add("Authorization", token)
 
 	resp, err := client.Do(request)
-
-	if err != nil {
-		log.Fatal("Error making request", err)
-	}
+	check(err)
 
 	defer resp.Body.Close()
 
@@ -51,24 +39,15 @@ func main() {
 	jsonBody := make([]map[string]interface{}, 10)
 
 	err = decoder.Decode(&jsonBody)
-	if err != nil {
-		log.Fatal("Error decoding json", err)
-	}
+	check(err)
 
 	out(len(jsonBody))
+}
 
-	//notifications := make(map[string]int)
-	//for _, notification := range jsonBody {
-	//	repoInfo := notification["repository"].(map[string]interface{})
-	//	key := repoInfo["name"].(string)
-	//	notifications[key]++
-	//}
-
-	//for key, count := range notifications {
-	//	fmt.Printf("%s: %d | ", key, count)
-	//}
-	//fmt.Println("")
-
+func check(err error) {
+	if err != nil {
+		log.Fatal(err)
+	}
 }
 
 func out(l int) {
